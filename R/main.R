@@ -30,3 +30,20 @@ read10xMatrix <- function(path) {
   storage.mode(x) <- 'integer'
   invisible(x);
 }
+
+#' @title get NW, NE, SW and SE corners of a dataframe or matrix
+#' @description return a new dataframe or matrix with the elements at the
+#' four corners of the one provided
+#'
+#' @param vals the dataframe or matrix of interest
+#' @param n how many rows/cols to return from each end
+#'
+#' @return the new matrix
+#'
+#' @export tableCorners
+tableCorners <- function(vals, n = 4) {
+  d <- dim(vals)
+  rows <- c(1:n,(d[1]-n):(d[1]))
+  cols <- c(1:n,(d[2]-n):(d[2]))
+  vals[rows, cols]
+}
