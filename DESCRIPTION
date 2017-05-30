@@ -4,7 +4,7 @@ Title: Various Useful Helper Functions
 Version: 0.1.0
 Author: Nikolas Barkas
 Maintainer: Nikolas Barkas <Nikolas.Barkas@outlook.com>
-Description: Various Useful Helper Functions
+Description: A collection of various useful helper functions by Nikolas Barkas.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

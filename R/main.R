@@ -22,7 +22,7 @@ read10xMatrix <- function(path) {
   if (!file.exists(genesFile)) { stop('Genes file does not exist'); }
   if (!file.exists(barcodesFile)) { stop('Barcodes file does not exist'); }
 
-  x <- as.matrix(readMM(matrixFile));
+  x <- as.matrix(Matrix::readMM(matrixFile));
   genes <- read.table(genesFile)
   rownames(x) <- genes[,2];
   barcodes <- read.table(barcodesFile);
@@ -46,4 +46,32 @@ tableCorners <- function(vals, n = 4) {
   rows <- c(1:n,(d[1]-n):(d[1]))
   cols <- c(1:n,(d[2]-n):(d[2]))
   vals[rows, cols]
+}
+
+
+#' @title save a R session image fast
+#' @description saves an R image of the current session much faster and with
+#' better compression that the built-in save.image function. Requires system lbzip2
+#' utility
+#' @param filename the file to save the image to
+#' @param tmpfile optional temporary file name, using a ramdisk location will further accelerate saving
+#' @param verbose logical verbosity level
+save.image.fast <- function(filename,tmpfile = NULL, verbose = FALSE) {
+  if (is.null(filename)) {
+    stop("filename argument is required");
+  }
+  if (is.null(tmpfile)) {
+    tmpfile <- tempfile();
+  }
+
+  if (verbose) { cat('Saving to temp file ', tmpfile,'\n') }
+  save.image(tmpfile, compress = FALSE);
+
+  cmd <- paste0('lbzip2 -c ', tmpfile, ' > ', filename)
+
+  if (verbose) { cat('Compressing...\n') };
+  system(cmd);
+
+  if (verbose) { cat('Deleting temporary file...') }
+  unlink(tmpfile)
 }
