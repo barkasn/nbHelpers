@@ -56,6 +56,7 @@ tableCorners <- function(vals, n = 4) {
 #' @param filename the file to save the image to
 #' @param tmpfile optional temporary file name, using a ramdisk location will further accelerate saving
 #' @param verbose logical verbosity level
+#' @export save.image.fast
 save.image.fast <- function(filename,tmpfile = NULL, verbose = FALSE) {
   if (is.null(filename)) {
     stop("filename argument is required");
@@ -81,7 +82,8 @@ save.image.fast <- function(filename,tmpfile = NULL, verbose = FALSE) {
 #' requires that the system has the lbunzip2 command installed
 #' @param tmpfile temporary file to use, use of ramdisk file will accelerate loading
 #' @param verbose logical verbosity level
-#' @envir enviroment in which to load the data, by default the calling environment
+#' @param envir enviroment in which to load the data, by default the calling environment
+#' @export load.image.fast
 load.image.fast <- function(filename, tmpfile = NULL, verbose=F, envir = parent.frame()) {
   if (is.null(filename)) {
     stop('filename argument is required');
