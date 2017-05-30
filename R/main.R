@@ -14,6 +14,8 @@ NULL
 #'
 #' @export read10xMatrix
 read10xMatrix <- function(path) {
+  require(Matrix)
+
   matrixFile <- paste(path, 'matrix.mtx', sep='/');
   genesFile <- paste(path, 'genes.tsv', sep='/');
   barcodesFile <- paste(path, 'barcodes.tsv', sep='/');
@@ -22,12 +24,13 @@ read10xMatrix <- function(path) {
   if (!file.exists(genesFile)) { stop('Genes file does not exist'); }
   if (!file.exists(barcodesFile)) { stop('Barcodes file does not exist'); }
 
-  x <- as.matrix(Matrix::readMM(matrixFile));
+  x <- as(Matrix::readMM(matrixFile), 'dgCMatrix')
+
   genes <- read.table(genesFile)
   rownames(x) <- genes[,2];
+
   barcodes <- read.table(barcodesFile);
   colnames(x) <- barcodes[,1]
-  storage.mode(x) <- 'integer'
   invisible(x);
 }
 
