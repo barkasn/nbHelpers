@@ -75,3 +75,28 @@ save.image.fast <- function(filename,tmpfile = NULL, verbose = FALSE) {
   if (verbose) { cat('Deleting temporary file...') }
   unlink(tmpfile)
 }
+
+#' Loads an image generated with save.image.fast()
+#' @description loads an image generated with the save.image.fast function. This function
+#' requires that the system has the lbunzip2 command installed
+#' @param tmpfile temporary file to use, use of ramdisk file will accelerate loading
+#' @param verbose logical verbosity level
+#' @envir enviroment in which to load the data, by default the calling environment
+load.image.fast <- function(filename, tmpfile = NULL, verbose=F, envir = parent.frame()) {
+  if (is.null(filename)) {
+    stop('filename argument is required');
+  }
+  if (is.null(tmpfile)) {
+    tmpfile <- tempfile();
+  }
+
+  if (verbose) { cat('Decompressing into temporary file ', tmpfile, '...\n') }
+  cmd <- paste0('lbunzip2 -c ', filename, ' > ', tmpfile);
+  system(cmd);
+
+  if  (verbose) { cat('Loading...\n') }
+  load(tmpfile, envir = envir);
+
+  if (verbose) { cat('Deleting temporary file...\n') }
+  unlink(tmpfile);
+}
