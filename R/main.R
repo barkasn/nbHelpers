@@ -116,3 +116,15 @@ load.image.fast <- function(filename, tmpfile = NULL, verbose=F, envir = parent.
   if (verbose) { cat('Deleting temporary file...\n') }
   unlink(tmpfile);
 }
+
+#' Generates a new vector from two vectors by combining them according to a third
+#' @description generates a vector from two vectors depending of the logical value of
+#' a third vector
+#' @param logical vector to use to combine the vTrue and vFalse vectors
+#' @param vTrue values to return if the logical is true
+#' @param vFalse values to return if the logical is false
+#' @return a new vector with some values from vTrue and some for vFalse
+#' @export mixVectorsOnLogical
+mixVectorsOnLogical <- function(logical,vTrue,vFalse) {
+  mapply(function(v, vt, vf) {ifelse(v, vt, vf)}, logical, vTrue, vFalse);
+}
