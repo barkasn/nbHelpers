@@ -8,5 +8,5 @@ Description: A collection of various useful helper functions by Nikolas Barkas.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: Matrix, utils
+Imports: Matrix, utils, stringdist
 RoxygenNote: 6.0.1
