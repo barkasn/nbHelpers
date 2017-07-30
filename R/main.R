@@ -128,3 +128,20 @@ load.image.fast <- function(filename, tmpfile = NULL, verbose=F, envir = parent.
 mixVectorsOnLogical <- function(logical,vTrue,vFalse) {
   mapply(function(v, vt, vf) {ifelse(v, vt, vf)}, logical, vTrue, vFalse);
 }
+
+#' Generates a random positive definite matrix
+#' @description generates a random positive definite matrix with the specified
+#' eigenvalues. Code from: https://stat.ethz.ch/pipermail/r-help/2008-February/153708.html
+#' @param n dimensions
+#' @param ev optional eigenvalues
+randomPositiveDefiniteMatrix <- function(n, ev = runif(n, 0, 10)) {
+  Z <- matrix(ncol=n, rnorm(n^2))
+  decomp <- qr(Z)
+  Q <- qr.Q(decomp)
+  R <- qr.R(decomp)
+  d <- diag(R)
+  ph <- d / abs(d)
+  O <- Q %*% diag(ph)
+  Z <- t(O) %*% diag(ev) %*% O
+  return(Z)
+}
