@@ -177,3 +177,65 @@ getDataWithCovarianceMatrix <- function(covM, nobs) {
 
   as.data.frame(t(t(chol(covM)) %*% matrix(rnorm(nvars*nobs), nrow=nvars, ncol=nobs)))
 }
+
+
+
+#' Makes an array with artificial doublets
+#' @description makes an array with artificial doublets
+#' @param cm count matrix, rows are genes, cols are cells
+#' @param group1
+#' @param group2
+#' @param mix.ratio.min
+#' @param mix.ratio.max
+#' @param n number of cells to generate
+#' @return a new array with artificial doublets
+#' @importFrom parallel mclapply
+#' @examples
+#'
+#' group1 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' group2 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' int <- intersect(group1,group2)
+#' length(int)
+#' group1 <- setdiff(group1, int)
+#' group2 <- setdiff(group2, int)
+#' doublets <- make.doublets(cm=cm, group1=group1, group2=group2, mix.ratio.min=0.4,mix.ratio.max=0.6, n=100, mc.cores=40)
+make.doublets.two.groups <- function(cm, group1, group2, mix.ratio.min, mix.ratio.max, n, mc.cores=1) {
+
+  require(parallel)
+  gene.list <- rownames(cm)
+
+  mx.rs <- runif(n,mix.ratio.min,mix.ratio.max)
+
+  x <- mclapply(mx.rs,function(mx.r){
+    # Pick two cells and a mixing ratio making sure cell 2 is not the same as cell 1
+    c1.name <- group1[floor(runif(1,1,length(group1)))]
+
+    c2.name <- c1.name
+    while(c2.name == c1.name) {
+      c2.name <- group2[floor(runif(1,1,length(group2)))]
+    }
+
+    r <- cm[,c1.name] + cm[,c2.name]
+
+    # Alternative ways of doing this by sampling reads
+    #mx.r <- runif(1,mix.ratio.min, mix.ratio.max)
+    #c1.tmp <- rep(gene.list,cm[,c1.name])
+    #c2.tmp <- rep(gene.list,cm[,c2.name])
+    #c1.l <- length(c1.tmp)
+    #c2.l <- length(c2.tmp)
+    #oversample <- 1.5
+    #c1.tmp <- c1.tmp[sample(1:c1.l,c1.l*mx.r*oversample)]
+    #c2.tmp <- c2.tmp[sample(1:c2.l,c2.l*(1-mx.r)*oversample)]
+    #all.tmp <- c(c1.tmp,c2.tmp)
+    #r <- table(all.tmp)[gene.list]
+    #r[is.na(r)] <- c(0)
+    #names(r) <- gene.list
+
+    r
+  }, mc.cores=mc.cores)
+
+  x2 <- do.call(rbind,x)
+  rownames(x2) <- paste0('doublet_',1:n)
+
+  invisible(t(x2))
+}
