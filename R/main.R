@@ -164,3 +164,188 @@ load.image.fast <- function(filename, tmpfile = NULL, verbose=F, envir = parent.
 mixVectorsOnLogical <- function(logical,vTrue,vFalse) {
   mapply(function(v, vt, vf) {ifelse(v, vt, vf)}, logical, vTrue, vFalse);
 }
+
+#' Generates a random positive definite matrix
+#' @description generates a random positive definite matrix with the specified
+#' eigenvalues. Code from: https://stat.ethz.ch/pipermail/r-help/2008-February/153708.html
+#' @param n dimensions
+#' @param ev optional eigenvalues
+#' @return a random positive definite matrix with requested eigenvalues
+#' @export randomPositiveDefiniteMatrix
+randomPositiveDefiniteMatrix <- function(n, ev = runif(n, 0, 10)) {
+  Z <- matrix(ncol=n, rnorm(n^2))
+  decomp <- qr(Z)
+  Q <- qr.Q(decomp)
+  R <- qr.R(decomp)
+  d <- diag(R)
+  ph <- d / abs(d)
+  O <- Q %*% diag(ph)
+  Z <- t(O) %*% diag(ev) %*% O
+  return(Z)
+}
+
+
+
+#' Generates data with covariance structure specified by the given covariance matrix
+#' @description Generates the requested number of observations that follow the given
+#' covariance structure specified by the given matrix
+#' @param covM a posititive definite covariance matrix
+#' @param nobs the number of observations requestest
+#' @return data.frame object with the observations as rows and the variables as columns
+#' @export getDataWithCovarianceMatrix
+getDataWithCovarianceMatrix <- function(covM, nobs) {
+  # https://www.r-bloggers.com/simulating-data-following-a-given-covariance-structure/
+
+  require(matrixcalc) # required for checking for positive definite
+
+  covDim <- dim(covM)
+  nvars <- covDim[2]
+
+  if (nobs < 1)
+    stop('No observations were requested')
+
+  if (covDim[1] != covDim[2])
+    stop('Covariance matrix is not square!')
+
+  if (!is.positive.definite(M)) {
+    stop('Covariance matrix is not positive definite!')
+  }
+
+  as.data.frame(t(t(chol(covM)) %*% matrix(rnorm(nvars*nobs), nrow=nvars, ncol=nobs)))
+}
+
+
+
+#' Makes an array with artificial doublets by adding cells together
+#' @description makes an array with artificial doublets  by adding cells together
+#' @param cm count matrix, rows are genes, cols are cells
+#' @param group1 group1 to sample from
+#' @param group2 group2 to sample from
+#' @param mix.ratio.min minimum mixing ratio
+#' @param mix.ratio.max maximum mixing ratio
+#' @param n number of cells to generate
+#' @return a new array with artificial doublets
+#' @importFrom parallel mclapply
+#' @export make.doublets.two.groups.add
+#' @examples
+#'
+#' group1 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' group2 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' int <- intersect(group1,group2)
+#' length(int)
+#' group1 <- setdiff(group1, int)
+#' group2 <- setdiff(group2, int)
+#' doublets <- make.doublets(cm=cm, group1=group1, group2=group2, mix.ratio.min=0.4,mix.ratio.max=0.6, n=100, mc.cores=40)
+make.doublets.two.groups.add <- function(cm, group1, group2, mix.ratio.min, mix.ratio.max, n, mc.cores=1) {
+
+  require(parallel)
+  gene.list <- rownames(cm)
+
+  mx.rs <- runif(n,mix.ratio.min,mix.ratio.max)
+
+  x <- mclapply(mx.rs,function(mx.r){
+    # Pick two cells and a mixing ratio making sure cell 2 is not the same as cell 1
+    c1.name <- group1[floor(runif(1,1,length(group1)))]
+
+    c2.name <- c1.name
+    while(c2.name == c1.name) {
+      c2.name <- group2[floor(runif(1,1,length(group2)))]
+    }
+
+    r <- cm[,c1.name] + cm[,c2.name]
+
+    r
+  }, mc.cores=mc.cores)
+
+  x2 <- do.call(rbind,x)
+  rownames(x2) <- paste0('doublet_',1:n)
+
+  invisible(t(x2))
+}
+
+
+#' Makes an array with artificial doublets by subsampling of different mix ratios
+#' @description makes an array with artificial doublets  by subsampling of different mix ratios
+#' @param cm count matrix, rows are genes, cols are cells
+#' @param group1 group1 to sample from
+#' @param group2 group2 to sample from
+#' @param mix.ratio.min minimum mixing ratio
+#' @param mix.ratio.max maximum mixing ratio
+#' @param n number of cells to generate
+#' @param oversample oversample/undersampling oversampling of reads
+#' @return a new array with artificial doublets
+#' @importFrom parallel mclapply
+#' @export make.doublets.two.groups.subsample
+#' @examples
+#'
+#' group1 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' group2 <- colnames(cm)[sample(1:length(colnames(cm)),1000)]
+#' int <- intersect(group1,group2)
+#' length(int)
+#' group1 <- setdiff(group1, int)
+#' group2 <- setdiff(group2, int)
+#' doublets <- make.doublets(cm=cm, group1=group1, group2=group2, mix.ratio.min=0.4,mix.ratio.max=0.6, n=100, mc.cores=40, oversample = 1.5)
+make.doublets.two.groups.subsample <- function(cm, group1, group2, mix.ratio.min, mix.ratio.max, n, mc.cores=1, oversample = 1.5) {
+
+  require(parallel)
+  gene.list <- rownames(cm)
+
+  mx.rs <- runif(n,mix.ratio.min,mix.ratio.max)
+
+  x <- mclapply(mx.rs,function(mx.r){
+    # Pick two cells and a mixing ratio making sure cell 2 is not the same as cell 1
+    c1.name <- group1[floor(runif(1,1,length(group1)))]
+
+    c2.name <- c1.name
+    while(c2.name == c1.name) {
+      c2.name <- group2[floor(runif(1,1,length(group2)))]
+    }
+
+    # Alternative ways of doing this by sampling reads
+
+    c1.tmp <- rep(gene.list,cm[,c1.name])
+    c2.tmp <- rep(gene.list,cm[,c2.name])
+    c1.l <- length(c1.tmp)
+    c2.l <- length(c2.tmp)
+
+    c1.tmp <- c1.tmp[sample(1:c1.l,c1.l*mx.r*oversample)]
+    c2.tmp <- c2.tmp[sample(1:c2.l,c2.l*(1-mx.r)*oversample)]
+    all.tmp <- c(c1.tmp,c2.tmp)
+    r <- table(all.tmp)[gene.list]
+    r[is.na(r)] <- c(0)
+    names(r) <- gene.list
+
+    r
+  }, mc.cores=mc.cores)
+
+  x2 <- do.call(rbind,x)
+  rownames(x2) <- paste0('doublet_',1:n)
+
+  invisible(t(x2))
+}
+
+#' Convert list of lists of numbers to array
+#' @description Converts lists of lists of numbers to a numeric array fast
+#' this has been optimised against other possible implementations and
+#' been found to the the fastest
+#' @param inputList a list of lists of numbers
+#' @return an array where the top-level lists are rows and low-level lists are columns
+#' @examples
+#' mylist <- list()
+#' mylist_ <- list()
+#' for(i in 1:10) {
+#'   for(j in 1:100) {
+#'     mylist[[j]] <- i*j
+#'   }
+#'   mylist_[[i]] <- mylist
+#' }
+#' str(mylist_)
+#' r3 <- ll2a.3(mylist_)
+#' @export ll2a
+ll2a <- function(inputList){
+  f <- as.matrix(as.data.frame(sapply(inputList, function(x) (unlist(x)),simplify = F),stringsAsFactors = F,as.is=T))
+  rownames(f) <- NULL
+  colnames(f) <- NULL
+
+  t(f)
+}
