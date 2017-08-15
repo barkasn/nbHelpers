@@ -375,8 +375,9 @@ loadKleinTables <- function(filepaths, min.common.genes = 1000, prefix.sep = '_'
   }, filepaths, names(filepaths))
 
   genelists <- lapply(matrices, function(x) colnames(x))
-  str(genelists)
   commongenes <- Reduce(intersect, genelists)
+
+  matrices2 <- lapply(matrices, function(x) {x[,commongenes]})
 
   if (length(commongenes) < min.common.genes) {
     stop('The number of common genes is too low!');
@@ -386,3 +387,4 @@ loadKleinTables <- function(filepaths, min.common.genes = 1000, prefix.sep = '_'
 
   bigM
 }
+
