@@ -3,6 +3,7 @@
 export(getDataWithCovarianceMatrix)
 export(ll2a)
 export(load.image.fast)
+export(loadKleinTables)
 export(make.doublets.two.groups.add)
 export(make.doublets.two.groups.subsample)
 export(minStringDistance)
