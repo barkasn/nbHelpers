@@ -407,7 +407,20 @@ mergeMatrices <- function(data.all) {
   x
 }
 
+#' Write a list of data.frames as individual csv files
+#' @description Write a list of data.frames as individual csv files
+#' @param x named list of data.frames
+#' @param output.dir the directory to save the files in
+#' @export writeListOfDFs
+writeListOfDFs <- function(x, output.dir) {
+  # TODO: Add checks: list is named; elements are data.frames; output.dir exists
 
+  mapply(function(x,name) {
+    write.table(x, paste0(output.dir,'/',name,'.csv'))
+  }, deres, names(deres));
+
+  invisible(NULL)
+}
 
 
 
