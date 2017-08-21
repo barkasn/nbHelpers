@@ -397,11 +397,20 @@ readMultipleInDropMatrices <- function(file.names) {
 
 #' Merge expression matrices in a list, keeping only common genes
 #' @param data.all a list of sparse matrices
+#' @param prefix.names logical, denoting whether to prefix the cell names with the table name
+#' @param prefix.sep character, separator to use between sample and cell name, defaults to _
 #' @return a single merged matrix
 #' @export mergeMatrices
-mergeMatrices <- function(data.all) {
+mergeMatrices <- function(data.all, prefix.names=T, prefix.sep = '_') {
   common.genes <- Reduce(intersect, lapply(data.all, function(x) {rownames(x)}))
-  data.all.common <- lapply(data.all, function(x) {x[common.genes,]})
+
+  data.all.common <- mapply(function(x, name) {
+    y <- x[common.genes,]
+    if(prefix.names) {
+      colnames(y) <- paste0(name, prefix.sep,  colnames(y))
+    }
+    y
+  }, data.all, names(data.all))
   x <- do.call(cbind, data.all.common)
 
   x
@@ -423,4 +432,17 @@ writeListOfDFs <- function(x, output.dir) {
 }
 
 
+
+
+#' @title read multiple 10x matrices and return as a list
+#' @description given a named list of paths of 10X matrices return a list of matrices
+#' @param matrices a names list of paths to the matrices (that can be read by read10XMatrix)
+#' @return a list
+#' @export readMultiple10XmatricesAsList
+readMultiple10XmatricesAsList <- function(pathList) {
+  # Read the matrices one by one
+  matrices <- sapply(pathList, read10xMatrix)
+
+  invisible(matrices)
+}
 

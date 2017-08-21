@@ -4,10 +4,14 @@
 \alias{mergeMatrices}
 \title{Merge expression matrices in a list, keeping only common genes}
 \usage{
-mergeMatrices(data.all)
+mergeMatrices(data.all, prefix.names = T, prefix.sep = "_")
 }
 \arguments{
 \item{data.all}{a list of sparse matrices}
+
+\item{prefix.names}{logical, denoting whether to prefix the cell names with the table name}
+
+\item{prefix.sep}{character, separator to use between sample and cell name, defaults to _}
 }
 \value{
 a single merged matrix
