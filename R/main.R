@@ -23,6 +23,7 @@ minStringDistance <- function(strings) {
 #' @export read10xMatrix
 read10xMatrix <- function(path) {
   require(Matrix)
+  require(Methods)
 
   matrixFile <- paste(path, 'matrix.mtx', sep='/');
   genesFile <- paste(path, 'genes.tsv', sep='/');
@@ -445,4 +446,3 @@ readMultiple10XmatricesAsList <- function(pathList) {
 
   invisible(matrices)
 }
-
