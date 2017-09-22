@@ -93,6 +93,9 @@ readMultiple10Xmatrices <- function(matrices, min.common.genes = 1000) {
 #'
 #' @export tableCorners
 tableCorners <- function(vals, n = 4) {
+  if (is.null(vals)) error("vals is NULL");
+  if (n < 1) error("Invalid value for n");
+
   d <- dim(vals)
   rows <- c(1:n,(d[1]-n):(d[1]))
   cols <- c(1:n,(d[2]-n):(d[2]))
