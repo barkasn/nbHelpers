@@ -435,9 +435,6 @@ writeListOfDFs <- function(x, output.dir) {
   invisible(NULL)
 }
 
-
-
-
 #' @title read multiple 10x matrices and return as a list
 #' @description given a named list of paths of 10X matrices return a list of matrices
 #' @param matrices a names list of paths to the matrices (that can be read by read10XMatrix)
@@ -448,4 +445,18 @@ readMultiple10XmatricesAsList <- function(pathList) {
   matrices <- sapply(pathList, read10xMatrix)
 
   invisible(matrices)
+}
+
+#' Get the colors of a pagoda1 serialised app object as a factor
+#' @description get the colors of a pagoda1 serialised app object as a factor from the app$results$colcol list
+#' @param filename the rds file to load
+#' @param colcol.name the name of the colcol item to retrive
+#' @return a named factor
+getFactorFromP1rds <- function(filename, colcol.name) {
+  app <- readRDS(filename)
+  env <- app@.xData
+  app2 <- as.list(env)
+  colcol <- app2$results$colcol
+  fac <- colcol[[colcol.name]]$data
+  fac
 }
