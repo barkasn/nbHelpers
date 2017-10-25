@@ -53,7 +53,7 @@ read10xMatrix <- function(path) {
 #' @export readMultiple10Xmatrices
 readMultiple10Xmatrices <- function(paths, min.common.genes = 1000) {
   # Read the matrices one by one
-  matrices <- sapply(pathList, read10xMatrix)
+  matrices <- sapply(paths, read10xMatrix)
 
   # Get the genes in each array
   genelists <- lapply(matrices, function(x) rownames(x))
