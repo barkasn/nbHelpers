@@ -47,11 +47,11 @@ read10xMatrix <- function(path) {
 #' @title read multiple 10x matrices into a single sparse array
 #' @description given a named list of paths of 10X matrices return a single large matrix
 #' with all the data and cell prefixed with the corresponding sample name
-#' @param matrices a names list of paths to the matrices (that can be read by read10XMatrix)
+#' @param paths named vector of location of the data (readable by read10Xmatrix())
 #' @param min.common.genes minimum number of common genes to allow
 #' @return a sparce matrix of the Matrix package that contains all the data prefixes by the corresponding sample name
 #' @export readMultiple10Xmatrices
-readMultiple10Xmatrices <- function(matrices, min.common.genes = 1000) {
+readMultiple10Xmatrices <- function(paths, min.common.genes = 1000) {
   # Read the matrices one by one
   matrices <- sapply(pathList, read10xMatrix)
 

@@ -4,10 +4,10 @@
 \alias{readMultiple10Xmatrices}
 \title{read multiple 10x matrices into a single sparse array}
 \usage{
-readMultiple10Xmatrices(matrices, min.common.genes = 1000)
+readMultiple10Xmatrices(paths, min.common.genes = 1000)
 }
 \arguments{
-\item{matrices}{a names list of paths to the matrices (that can be read by read10XMatrix)}
+\item{paths}{named vector of location of the data (readable by read10Xmatrix())}
 
 \item{min.common.genes}{minimum number of common genes to allow}
 }
