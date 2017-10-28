@@ -20,11 +20,10 @@ minStringDistance <- function(strings) {
 #' files in the specified directory do not exist.
 #' @param path location of 10x output
 #' @return read matrix
+#' @import Matrix
+#' @import methods
 #' @export read10xMatrix
 read10xMatrix <- function(path) {
-  require(Matrix)
-  require(methods)
-
   matrixFile <- paste(path, 'matrix.mtx', sep='/');
   genesFile <- paste(path, 'genes.tsv', sep='/');
   barcodesFile <- paste(path, 'barcodes.tsv', sep='/');
@@ -134,6 +133,7 @@ save.image.fast <- function(filename,tmpfile = NULL, verbose = FALSE) {
 #' Loads an image generated with save.image.fast()
 #' @description loads an image generated with the save.image.fast function. This function
 #' requires that the system has the lbunzip2 command installed
+#' @param filename filename to load
 #' @param tmpfile temporary file to use, use of ramdisk file will accelerate loading
 #' @param verbose logical verbosity level
 #' @param envir enviroment in which to load the data, by default the calling environment
@@ -196,11 +196,10 @@ randomPositiveDefiniteMatrix <- function(n, ev = runif(n, 0, 10)) {
 #' @param covM a posititive definite covariance matrix
 #' @param nobs the number of observations requestest
 #' @return data.frame object with the observations as rows and the variables as columns
+#' @import matrixcalc
 #' @export getDataWithCovarianceMatrix
 getDataWithCovarianceMatrix <- function(covM, nobs) {
   # https://www.r-bloggers.com/simulating-data-following-a-given-covariance-structure/
-
-  require(matrixcalc) # required for checking for positive definite
 
   covDim <- dim(covM)
   nvars <- covDim[2]
@@ -211,7 +210,7 @@ getDataWithCovarianceMatrix <- function(covM, nobs) {
   if (covDim[1] != covDim[2])
     stop('Covariance matrix is not square!')
 
-  if (!is.positive.definite(M)) {
+  if (!matrixcalc::is.positive.definite(covM)) {
     stop('Covariance matrix is not positive definite!')
   }
 
@@ -242,12 +241,11 @@ getDataWithCovarianceMatrix <- function(covM, nobs) {
 #' doublets <- make.doublets(cm=cm, group1=group1, group2=group2, mix.ratio.min=0.4,mix.ratio.max=0.6, n=100, mc.cores=40)
 make.doublets.two.groups.add <- function(cm, group1, group2, mix.ratio.min, mix.ratio.max, n, mc.cores=1) {
 
-  require(parallel)
   gene.list <- rownames(cm)
 
   mx.rs <- runif(n,mix.ratio.min,mix.ratio.max)
 
-  x <- mclapply(mx.rs,function(mx.r){
+  x <- parallel::mclapply(mx.rs,function(mx.r){
     # Pick two cells and a mixing ratio making sure cell 2 is not the same as cell 1
     c1.name <- group1[floor(runif(1,1,length(group1)))]
 
@@ -291,12 +289,11 @@ make.doublets.two.groups.add <- function(cm, group1, group2, mix.ratio.min, mix.
 #' doublets <- make.doublets(cm=cm, group1=group1, group2=group2, mix.ratio.min=0.4,mix.ratio.max=0.6, n=100, mc.cores=40, oversample = 1.5)
 make.doublets.two.groups.subsample <- function(cm, group1, group2, mix.ratio.min, mix.ratio.max, n, mc.cores=1, oversample = 1.5) {
 
-  require(parallel)
   gene.list <- rownames(cm)
 
   mx.rs <- runif(n,mix.ratio.min,mix.ratio.max)
 
-  x <- mclapply(mx.rs,function(mx.r){
+  x <- parallel::mclapply(mx.rs,function(mx.r){
     # Pick two cells and a mixing ratio making sure cell 2 is not the same as cell 1
     c1.name <- group1[floor(runif(1,1,length(group1)))]
 
@@ -359,6 +356,7 @@ ll2a <- function(inputList){
 #' @param path path of the file
 #' @param prefix prefix to add to the cell names
 #' @return a sparse matrix
+#' @import Matrix
 #' @export readKleinMatrix
 readKleinMatrix <- function(path, prefix) {
   require(Matrix)

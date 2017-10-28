@@ -8,6 +8,8 @@ load.image.fast(filename, tmpfile = NULL, verbose = F,
   envir = parent.frame())
 }
 \arguments{
+\item{filename}{filename to load}
+
 \item{tmpfile}{temporary file to use, use of ramdisk file will accelerate loading}
 
 \item{verbose}{logical verbosity level}
