@@ -458,3 +458,44 @@ getFactorFromP1rds <- function(filename, colcol.name) {
   fac <- colcol[[colcol.name]]$data
   fac
 }
+
+#' Generate a ggplot2 plot comparing two factors for a common set of datapoints
+#' @description Generates a ggplot barplot that compares two names two nameed factors
+#' for the specified points. The x axis corresponds to factor B and the y axis
+#' factor A.
+#' @param factorA the factor the distibution of which with respect to factorB will be assessed (y axis)
+#' @param factorB the factor to breakdown factorA by
+#' @param points the names of the elemets of the factorsA and factorB to include for the
+#' purposed of the plot
+#' @examples
+#' fA <- rep(c('A','B','C','D'), each = 4);
+#' fB <- rep(c('W','Y'), each = 8)
+#' n <- paste0('n',1:16)
+#' names(fA) <- n
+#' names(fB) <- n
+#' plotFactorsPercent(fA, fB, points = names(fA)[1:9])
+plotFactorsPercent <- function(factorA, factorB, points = NULL, factorA.name = 'factorA', factorB.name = 'factorB' ) {
+  require(ggplot2)
+  require(reshape2)
+
+  if (is.null(points)) {
+    if (!(all(names(factorA) %in% names(factorB)) & all(names(factorB) %in% names(factorA)))) {
+      points <- intersect(names(factorA), names(factorB))
+      warning("points is null and the two factors contain different elements: using only common elements")
+    } else {
+      points <- names(factorA)
+    }
+  }
+
+  tmpdf <- data.frame(factorA=factorA[points], factorB = factorB[points]);
+  tmpa <- acast(tmpdf, factorA ~ factorB, fun.aggregate=length, value.var='factorB')
+
+  tmpa.norm <- sweep(tmpa, 2, colSums(tmpa), FUN='/')
+  tmpa.norm.m <- melt(tmpa.norm)
+
+  ggplot(tmpa.norm.m, aes(x=as.factor(Var2), y=value, fill=as.factor(Var1))) + geom_bar(stat='identity') +
+    scale_x_discrete(name = factorB.name) + scale_fill_discrete(name = factorA.name) +
+    scale_y_continuous(name=paste0('proportion of ',factorA.name))
+}
+
+
