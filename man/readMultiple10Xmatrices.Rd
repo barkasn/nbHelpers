@@ -2,19 +2,7 @@
 % Please edit documentation in R/main.R
 \name{readMultiple10Xmatrices}
 \alias{readMultiple10Xmatrices}
-\title{read multiple 10x matrices into a single sparse array}
+\title{wrapper with old name for read10xmatrices}
 \usage{
-readMultiple10Xmatrices(paths, min.common.genes = 1000)
-}
-\arguments{
-\item{paths}{named vector of location of the data (readable by read10Xmatrix())}
-
-\item{min.common.genes}{minimum number of common genes to allow}
-}
-\value{
-a sparce matrix of the Matrix package that contains all the data prefixes by the corresponding sample name
-}
-\description{
-given a named list of paths of 10X matrices return a single large matrix
-with all the data and cell prefixed with the corresponding sample name
+readMultiple10Xmatrices(...)
 }
