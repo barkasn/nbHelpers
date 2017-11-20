@@ -458,3 +458,4 @@ getFactorFromP1rds <- function(filename, colcol.name) {
   fac <- colcol[[colcol.name]]$data
   fac
 }
+
