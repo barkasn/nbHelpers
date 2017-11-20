@@ -42,42 +42,68 @@ read10xMatrix <- function(path) {
   invisible(x);
 }
 
+#' @title wrapper with old name for read10xmatrices
+#' @export readMultiple10Xmatrices
+readMultiple10Xmatrices <- function(...) {
+    readmultiple10xmatrices(...);
+}
 
 #' @title read multiple 10x matrices into a single sparse array
 #' @description given a named list of paths of 10X matrices return a single large matrix
 #' with all the data and cell prefixed with the corresponding sample name
 #' @param paths named vector of location of the data (readable by read10Xmatrix())
 #' @param min.common.genes minimum number of common genes to allow
+#' @param common.genes logical, subset all matrices to common genes, required for merge
+#' @param merge logical, merge all the matrices to one, requires common.genes and prefix.cells
+#' @param prefix.cells prefix all cells with the name of the respective path in paths
+#' @param prefix.sep separator for prefix of cells
 #' @return a sparce matrix of the Matrix package that contains all the data prefixes by the corresponding sample name
-#' @export readMultiple10Xmatrices
-readMultiple10Xmatrices <- function(paths, min.common.genes = 1000) {
+#' @export read10xmatrices
+read10xmatrices <- function(paths, min.common.genes = 1000, common.genes = T, merge =T, prefix.cells=T,
+                            prefix.sep = '_') {
+  if (merge && !common.genes) stop("Can't merge matrices if common.genes is not set. Aborting.");
+  if (merge && !prefix.cells) stop("Can't merge matrices if prefix.cells is not set. Aborting.");
+
   # Read the matrices one by one
   matrices <- sapply(paths, read10xMatrix)
 
-  # Get the genes in each array
-  genelists <- lapply(matrices, function(x) rownames(x))
-
-  # Find the common genes, these are usually all the same for 10X data
-  commongenes <- Reduce(intersect,genelists)
-
-  if (length(commongenes) < min.common.genes) {
-    stop('The number of common genes is too low!');
+  ## Prefix the arrays
+  if (prefix.cells) {
+      matrices <- mapply(
+          function(m, name) {
+              colnames(m) <- paste(name, colnames(m), sep=prefix.sep);
+              m
+          },
+          matrices,
+          names(matrices)
+      )
   }
 
-  # Prefix the arrays
-  matrices2 <- mapply(
-    function(m, name) {
-      colnames(m) <- paste(name, colnames(m), sep='_');
-      m[commongenes,]
-    },
-    matrices,
-    names(matrices)
-  )
+  ## Merge the arrays
+  if (merge) {
+      ## Get the genes in each array
+      genelists <- lapply(matrices, function(x) rownames(x))
+      ## Find the common genes
+      commongenes <- Reduce(intersect,genelists)
+      ## Stop if common genes too low
+      if (length(commongenes) < min.common.genes) stop('The number of common genes is too low!');
+      # Subset to common genes
+      matrices <- mapply(
+          function(m, name) {
+              m[commongenes,]
+          },
+          matrices,
+          names(matrices)
+      )
 
-  rm(matrices) # No longer required and is a large object
+      if (merge) {
+          matrices <- Reduce(cbind, matrices)
+      }
+  }
 
-  # Merge the matrixes
-  Reduce(cbind, matrices2)
+
+  ## Return
+  matrices
 }
 
 
@@ -498,4 +524,18 @@ plotFactorsPercent <- function(factorA, factorB, points = NULL, factorA.name = '
     scale_y_continuous(name=paste0('proportion of ',factorA.name))
 }
 
+
+#' Get all unique combinations of elements in a list
+#' @param nms elements to get combinations
+#' @return list of pairs of elements
+#' @importFrom gtools combinations
+#' @export uniqCombs
+uniqCombs <- function(nms) {
+    nms <- unique(nms)
+
+    combs <- combinations(n = length(nms), r = 2, v = nms, repeats.allowed =F)
+    ret <- split(t(combs), rep(1:nrow(combs), each=ncol(combs)))
+
+    ret
+}
 
