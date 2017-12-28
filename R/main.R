@@ -550,3 +550,26 @@ preserve.state <- function(prefix='savepoint_') {
   file
 }
 
+#' Convert a factor to a character vector, while preserving the names
+#' @param f the factor to convert
+#' @return a named character vector
+factor2Char <- function(f) {
+  r <- as.character(f);
+  names(r) <- names(f);
+  r
+}
+
+#' Combine two named factors when the new factor contains a breaking up of the
+#' a subset of the original clusters
+#' @param originalFactor the factor in which to breakup clusters, this is not modified
+#' @param newFactor the new factor specifying new cluster identities for some of the elements
+#' @return a new factor with the above combination of the factos
+replaceClusterFactors <- function(originalFactor, newFactor, newPrefix=NULL) {
+  if(is.null(newPrefix)) stop('newPrefix is null');
+  wf <- factor2Char(originalFactor);
+  nwf <- factor2Char(newFactor);
+  if(any(!names(nwf) %in% names(wf))) stop('newFactor is not a subset of originalFactor');
+  wf[names(nwf)] <- paste0(c(newPrefix), nwf);
+  wf <- as.factor(wf);
+  wf
+}
