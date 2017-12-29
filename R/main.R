@@ -573,3 +573,11 @@ replaceClusterFactors <- function(originalFactor, newFactor, newPrefix=NULL) {
   wf <- as.factor(wf);
   wf
 }
+
+#' Head and tail of a table combined
+#' @param x the table object
+#' @param n a single integer
+#' @return a table made of the n first elemets of x and n last elements of x
+headtail <- function(x, n=6) {
+  rbind(head(x,n), tail(x,n))
+}
