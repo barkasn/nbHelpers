@@ -10,6 +10,9 @@ preserve.state(prefix = "savepoint_")
 \arguments{
 \item{prefix}{the prefix to use,for the filename}
 }
+\value{
+the name of the file that was saved in
+}
 \description{
 Save the session in the current working directory with a file name that
 includes the time stamp and process id

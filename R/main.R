@@ -581,3 +581,22 @@ replaceClusterFactors <- function(originalFactor, newFactor, newPrefix=NULL) {
 headtail <- function(x, n=6) {
   rbind(head(x,n), tail(x,n))
 }
+
+
+#' Break down a factor returning the names of the elements
+#' in each level as character vectors in a list
+#' @param f a factor to breakdown
+#' @return a list of factor levels with the names of elemements in them
+#' @export factorBreakdown
+factorBreakdown <- function(f) {
+    if(!is.factor(f)) stop('not a factor!')
+    lvls <- levels(f);
+    names(lvls) <- lvls;
+    lapply(lvls, function(l) {
+        r <- names(f)[f == l]
+        names(r) <- r
+        r
+    })
+}
+
+
