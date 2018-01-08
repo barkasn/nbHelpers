@@ -1,4 +1,5 @@
-#' @author Nikolas Barkas
+#' @importFrom utils read.table
+#' @importFrom Matrix readMM
 NULL
 
 #' Save the session in the current working directory with a file name that
@@ -11,8 +12,6 @@ preserve.state <- function(prefix='savepoint_') {
   save.image.fast(file)
   file
 }
-
-
 
 #' @title save a R session image fast
 #' @description saves an R image of the current session much faster and with

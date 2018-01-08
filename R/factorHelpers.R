@@ -1,4 +1,5 @@
-#' @author Nikolas Barkas
+#' @importFrom utils read.table
+#' @importFrom Matrix readMM
 NULL
 
 #' Break down a factor returning the names of the elements
@@ -16,7 +17,6 @@ factorBreakdown <- function(f) {
     r
   })
 }
-
 
 #' Convert a factor to a character vector, while preserving the names
 #' @param f the factor to convert
