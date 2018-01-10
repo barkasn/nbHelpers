@@ -107,3 +107,16 @@ writeListOfDFs <- function(x, output.dir) {
 
   invisible(NULL)
 }
+
+#' Get a vector of the names of an object named by the names themselves
+#' @description Get a named vector of the names of an object. This is useful
+#' with lapply when passing names of objects as it ensures that the output list
+#' is also named
+#' @param g an objects on which we can call names()
+#' @export namedNames
+namedNames <- function(g) {
+  n <- names(g)
+  names(n) <- n;
+  n
+}
+
