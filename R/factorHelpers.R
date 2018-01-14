@@ -21,6 +21,7 @@ factorBreakdown <- function(f) {
 #' Convert a factor to a character vector, while preserving the names
 #' @param f the factor to convert
 #' @return a named character vector
+#' @export factor2Char
 factor2Char <- function(f) {
   r <- as.character(f);
   names(r) <- names(f);
@@ -79,4 +80,37 @@ plotFactorsPercent <- function(factorA, factorB, points = NULL, factorA.name = '
   ggplot(tmpa.norm.m, aes(x=as.factor(Var2), y=value, fill=as.factor(Var1))) + geom_bar(stat='identity') +
     scale_x_discrete(name = factorB.name) + scale_fill_discrete(name = factorA.name) +
     scale_y_continuous(name=paste0('proportion of ',factorA.name))
+}
+
+
+
+
+
+#' Remove levels and elements from a factor that have fewer than min.size entries
+#' @param f factor
+#' @param min.size minimum size levels to keep
+#' @return a new factor
+#' @export removeLevelsBySize
+removeLevelsBySize <- function(f, min.size = 3) {
+    if (!is.factor(f)) stop('f is not a factor!')
+
+    min.size <- 3
+    f <- ngrp
+
+    lvl.counts <- table(f)
+    cl.remove <- names(lvl.counts)[unname(lvl.counts) < 3]
+    
+    removeLevelsFromFactor(f, cl.remove)
+}
+
+#' Remove all elements from specificed clusters from a factor
+#' and drop the respective levels
+#' @param f factor
+#' @param cl.remove character vector f clusters to remove
+#' @return a new factor
+#' @export removeLevelsFromFactor
+removeLevelsFromFactor <- function(f, cl.remove) {
+    fc <- factor2Char(f)
+    nfc <- fc[!fc %in% cl.remove]
+    as.factor(nfc)
 }
