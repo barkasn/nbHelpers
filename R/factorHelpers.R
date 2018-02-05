@@ -18,6 +18,13 @@ factorBreakdown <- function(f) {
   })
 }
 
+#' Break down a factor returning the names of the elements
+#' in each level as character vectors in a list
+#' @param f a factor to breakdown
+#' @return a list of factor levels with the names of elemements in them
+#' @export factorBreakdown.2
+factorBreakdown.2 <- function(f) {tapply(names(jc.N.groups),jc.N.groups, identity) }
+
 #' Convert a factor to a character vector, while preserving the names
 #' @param f the factor to convert
 #' @return a named character vector
@@ -99,7 +106,7 @@ removeLevelsBySize <- function(f, min.size = 3) {
 
     lvl.counts <- table(f)
     cl.remove <- names(lvl.counts)[unname(lvl.counts) < 3]
-    
+
     removeLevelsFromFactor(f, cl.remove)
 }
 
