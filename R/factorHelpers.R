@@ -23,7 +23,7 @@ factorBreakdown <- function(f) {
 #' @param f a factor to breakdown
 #' @return a list of factor levels with the names of elemements in them
 #' @export factorBreakdown.2
-factorBreakdown.2 <- function(f) {tapply(names(jc.N.groups),jc.N.groups, identity) }
+factorBreakdown.2 <- function(f) {tapply(names(f),f, identity) }
 
 #' Convert a factor to a character vector, while preserving the names
 #' @param f the factor to convert
