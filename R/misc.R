@@ -130,3 +130,10 @@ str1 <- function(x) {str(x,1)}
 #' @export str2
 str2 <- function(x) {str(x,2)}
 
+#' Reload a package from the library
+#' @param pkg the package to reload
+#' @export rldpkg
+rldpkg <- function(pkg) {
+    require('devtools')
+    reload(inst(pkg))
+}
