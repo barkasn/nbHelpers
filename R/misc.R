@@ -120,3 +120,13 @@ namedNames <- function(g) {
   n
 }
 
+#' Get the top level structure of an object
+#' @param x the object to examine
+#' @export str1
+str1 <- function(x) {str(x,1)}
+
+#' Get the two top levels of structure of an object
+#' @param x the object to examine
+#' @export str2
+str2 <- function(x) {str(x,2)}
+
