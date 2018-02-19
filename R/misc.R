@@ -137,3 +137,46 @@ rldpkg <- function(pkg) {
     require('devtools')
     reload(inst(pkg))
 }
+
+#' Load a sparse matrix from an HDF5 file ensuring that the
+#' second dimension is sorted
+#' @param path location of the HDF files
+#' @return a Matrix sparse matrix
+#' @export load.hca.matrix
+load.hca.matrix <- function(path) {
+    require('rhdf5')
+    require('Matrix')
+
+    cat('Loading HDF5 file...');
+    genes <- h5read(path, 'GRCh38/genes')
+    gene.names <- h5read(path, 'GRCh38/gene_names')
+    barcodes <- h5read(path, 'GRCh38/barcodes')
+    indptr <- h5read(path, 'GRCh38/indptr')
+    shape <- h5read(path, 'GRCh38/shape')
+    indices <- h5read(path, 'GRCh38/indices')
+    data <- h5read(path, 'GRCh38/data')
+    cat('done\n');
+
+    cat('Sorting elements...');
+    ord1 <- unlist(lapply(1:(length(indptr)-1), function(i) {
+        rowStart <- indptr[i] + 1;
+        ## indptr[i+1] is the start of the next one in 0 indexed
+        rowEnd <- indptr[i+1];
+        rowIndices <- indices[c(rowStart:rowEnd)]
+        rowElementOrder <- order(rowIndices) + rowStart - 1;
+        rowElementOrder
+    }))
+    cat('done\n')
+
+    cat('Generating matrix...')
+    res <- new('dgCMatrix',
+        i=as.integer(indices[ord1]),
+        p=as.integer(indptr),
+        x=as.double(data[ord1]),
+        Dim=as.integer(shape),
+        Dimnames=list(gene.names,barcodes)
+        )
+    cat('done\n')
+
+    res
+}
