@@ -121,3 +121,19 @@ removeLevelsFromFactor <- function(f, cl.remove) {
     nfc <- fc[!fc %in% cl.remove]
     as.factor(nfc)
 }
+
+
+
+
+#' Merge a previously broken down factor
+#' @param bdf a broken down factor
+#' @return a factor
+#' @export mergeFactorx
+mergeFactor <- function(bdf) {
+    ret <- unlist(unname(mapply(function(cells,cl.name) {
+        x <- rep(as.character(cl.name), length(cells))
+        names(x) <- cells
+        x
+    },bdf, names(bdf))))
+    as.factor(ret)
+}
