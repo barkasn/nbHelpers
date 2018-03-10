@@ -180,3 +180,10 @@ load.hca.matrix <- function(path) {
 
     res
 }
+
+#' Get the symmetrical set difference between two sets (XOR)
+#' @param a first set
+#' @param b sencond set
+#' @return elements in one of the two sets but not in the intersection
+#' @export symmsetdiff
+symmsetdiff <- function(a,b) {c(setdiff(a,b),setdiff(b,a))}
