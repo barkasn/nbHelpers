@@ -187,3 +187,14 @@ load.hca.matrix <- function(path) {
 #' @return elements in one of the two sets but not in the intersection
 #' @export symmsetdiff
 symmsetdiff <- function(a,b) {c(setdiff(a,b),setdiff(b,a))}
+
+#' Convert DESeq2 results table into a tibble
+#' @import tibble
+#' @return results table in tibble format
+#' @export deseqRes2Tibble
+deseqRes2Tibble <- function(res) {
+    if(class(res) != 'DESeqResults') stop('res is not DESeq2 results');
+    res <- as.data.frame(res)
+    res$gene <- rownames(res)
+    as.tibble(res)
+}
