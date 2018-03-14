@@ -198,3 +198,13 @@ deseqRes2Tibble <- function(res) {
     res$gene <- rownames(res)
     as.tibble(res)
 }
+
+#' Get the specified substring of string delimited by a character
+#' @param x the strings to breakdown now (can be vector)
+#' @param split the character to breakdown by
+#' @param integer specifying which substing to get
+#' @return extracted substrings
+#' @export strpart
+strpart <- function(x, split, n) {
+    sapply(strsplit(as.character(x),split),'[',n)
+}
