@@ -208,3 +208,14 @@ deseqRes2Tibble <- function(res) {
 strpart <- function(x, split, n) {
     sapply(strsplit(as.character(x),split),'[',n)
 }
+
+#' Set the display parameter for X11 plotting
+#' @param display.number the display number to set
+#' @param host the host to set, defaults to localhost
+#' return NUll
+#' @export setDisplay
+setDisplay <- function(display.number = NULL, host='localhost') {
+    if(is.null(display.number)) stop('display number not specified');
+    Sys.setenv(DISPLAY=paste0(host,':',display.number));
+    invisible(NULL)
+}
