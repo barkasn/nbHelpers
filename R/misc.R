@@ -219,3 +219,24 @@ setDisplay <- function(display.number = NULL, host='localhost') {
     Sys.setenv(DISPLAY=paste0(host,':',display.number));
     invisible(NULL)
 }
+
+#' Return TRUE if the parameter is an error object
+#' @param x the object to test
+#' @export is.error
+is.error <- function(x) {
+  inherits(x, c("try-error", "error"))
+}
+
+#' get number of rows and cols to use when printing a n.items number of items
+#' @param n.items number of items
+#' @param square force number of columns and rows to be equal
+#' @export getParMfrow
+getParMfrow <- function(n.items, square = FALSE) {
+  n <- ceiling(sqrt(n.items))
+  if (square)  {
+    c(n,n);
+  } else {
+    m <- ceiling(n.items/n)
+    c(n,m)
+  }
+}
