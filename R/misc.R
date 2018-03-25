@@ -240,3 +240,40 @@ getParMfrow <- function(n.items, square = FALSE) {
     c(n,m)
   }
 }
+
+#' Get the number of commong elements among the top n elements
+#' of two character vectors where n varies between a specified range
+#' @param itemsA character vector A
+#' @param itemsB character vector B
+#' @param start start of overlap sequence
+#' @param seq_end end of overlap sequence,
+#' if NULL up to the size of the smallest of the two lists (default: NULL)
+#' @return dataframe with two columns
+#' @export vectorSeqOverlap
+vectorSeqOverlap <- function(itemsA, itemsB, start=1, seq_end=NULL) {
+    ## Process params
+    if( class(itemsA) != 'character') {
+        stop('itemsA is not a character vector');
+    }
+    if ( class(itemsB) != 'character') {
+        stop('itemsB is not a character vector');
+    }
+    if(!is.numeric(start)) {
+        stop('start is not a number')
+    }
+    if(is.null(seq_end)) seq_end <- min(length(itemsA), length(itemsB))
+    if(start > seq_end) {stop('start is larger than end')}
+    ## Get sequence to calculater overlap
+    s <- seq(start,seq_end)
+    names(s) <-s 
+    ## Calculate the overlap at different levels down the list
+    overlap <- unlist(lapply(s, function(n) {
+        length(intersect(head(itemsA,n=n),head(itemsB,n=n)))
+        }))
+    ## return
+    data.frame(
+        row.names=NULL,
+        n=as.numeric(names(overlap)),
+        overlap=as.numeric(overlap)
+    )
+}
