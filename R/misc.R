@@ -120,6 +120,14 @@ namedNames <- function(g) {
   n
 }
 
+#' Set the element of an objects as the names
+#' Useful in combination with lapply
+#' @param x the object to process
+#' @return the same object with the elements named after conversion to character
+#' @export setNames
+setNames <- function(x) {names(x) <- as.character(x); x}
+
+
 #' Get the top level structure of an object
 #' @param x the object to examine
 #' @export str1
@@ -265,7 +273,7 @@ vectorSeqOverlap <- function(itemsA, itemsB, start=1, seq_end=NULL) {
     if(start > seq_end) {stop('start is larger than end')}
     ## Get sequence to calculater overlap
     s <- seq(start,seq_end)
-    names(s) <-s 
+    names(s) <-s
     ## Calculate the overlap at different levels down the list
     overlap <- unlist(lapply(s, function(n) {
         length(intersect(head(itemsA,n=n),head(itemsB,n=n)))
