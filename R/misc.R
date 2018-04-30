@@ -228,6 +228,13 @@ setDisplay <- function(display.number = NULL, host='localhost') {
     invisible(NULL)
 }
 
+#' Get the display paramters for X11 plotting
+#' @return DISPLAY variable value
+#' @export getDisplay
+getDisplay <- function() {
+    Sys.getenv('DISPLAY');
+}
+
 #' Return TRUE if the parameter is an error object
 #' @param x the object to test
 #' @export is.error
