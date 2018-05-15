@@ -213,8 +213,8 @@ deseqRes2Tibble <- function(res) {
 #' @param integer specifying which substing to get
 #' @return extracted substrings
 #' @export strpart
-strpart <- function(x, split, n) {
-    sapply(strsplit(as.character(x),split),'[',n)
+strpart <- function(x, split, n, fixed=FALSE) {
+    sapply(strsplit(as.character(x),split,fixed=fixed),'[',n)
 }
 
 #' Set the display parameter for X11 plotting
