@@ -4,7 +4,7 @@
 \alias{strpart}
 \title{Get the specified substring of string delimited by a character}
 \usage{
-strpart(x, split, n)
+strpart(x, split, n, fixed = FALSE)
 }
 \arguments{
 \item{x}{the strings to breakdown now (can be vector)}
