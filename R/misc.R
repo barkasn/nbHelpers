@@ -292,3 +292,23 @@ vectorSeqOverlap <- function(itemsA, itemsB, start=1, seq_end=NULL) {
         overlap=as.numeric(overlap)
     )
 }
+
+#' Convert NA values in x to the value specified by val
+#' @export NA2VALUE
+NA2VALUE <- function(x, val) {
+  x[is.na(x)] <- c(val); x
+}
+
+#' Convert NA values in x to FALSE
+#' @export NA2FALSE
+NA2FALSE <- function(x) {
+  NA2VALUE(x,FALSE)
+}
+
+#' Get the number of processors allocated to the current job by
+#' the Slurm scheduler from the environment. Return 1 otherwise
+#' @export getSlurmCpus
+getSlurmCpus <- function() {
+  NA2VALUE(as.numeric(Sys.getenv()['SLURM_CPUS_ON_NODE']),1)
+}
+
