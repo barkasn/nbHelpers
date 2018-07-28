@@ -312,3 +312,18 @@ getSlurmCpus <- function() {
   NA2VALUE(as.numeric(Sys.getenv()['SLURM_CPUS_ON_NODE']),1)
 }
 
+#' Get a vector with the levels of a factor named with their
+#' own name. Useful for lapply loops over factor levels
+#' @param f a factor
+#' @return named character vector of factor levels
+#' @export namedLevels
+namedLevels <- function(f) {
+  if(!is.factor(f)) {
+    stop('f is not a factor')
+  }
+  r <- levels(f)
+  names(r) <- r
+  r
+}
+
+
