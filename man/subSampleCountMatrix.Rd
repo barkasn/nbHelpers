@@ -4,12 +4,14 @@
 \alias{subSampleCountMatrix}
 \title{Subsample a count matrix to a specific number of reads}
 \usage{
-subSampleCountMatrix(mat, final.count = 1e+07)
+subSampleCountMatrix(mat, final.count = 1e+07, verbose = FALSE)
 }
 \arguments{
 \item{mat}{sparse matrix of class dgCMatrix}
 
 \item{final.count}{final number of reads the matrix should have}
+
+\item{verbose}{logical verbosity}
 }
 \value{
 a new dgCMatrix subsample to the requested number of reads
