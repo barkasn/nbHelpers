@@ -3,7 +3,7 @@
 #' @param mat sparse matrix of class dgCMatrix
 #' @param final.count final number of reads the matrix should have
 #' @return a new dgCMatrix subsample to the requested number of reads
-#' @export subsampleCountMatrix
+#' @export subSampleCountMatrix
 subSampleCountMatrix <- function(mat, final.count=1e7) {
     if(class(mat) != 'dgCMatrix') {
         stop('mat is not of class dgCMatrix')
