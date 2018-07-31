@@ -35,7 +35,7 @@ subSampleCountMatrix <- function(mat, final.count=1e7) {
     mat <- Matrix::drop0(mat)
     ## due to negatives we have probably not hit the target, iterate
     if(sum(mat@x) > final.count) {
-        mat <- subsampleCountMatrix(mat,final.count)
+        mat <- subSampleCountMatrix(mat,final.count)
     }
     ## return
     mat
