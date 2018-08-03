@@ -77,13 +77,18 @@ subSampleCountMatrix2 <- function (mat,final.count = 1e+06, seed=NULL)
   srr <- sample(sum(mat@x),reads.remove, replace=FALSE)
   ## map the read ids to positions on the x vector
   csx <- cumsum(mat@x)
-  reads.remove.entries <- table(findInterval(srr, csx))
-  p <- reads.remove.entries[1:length(mat@x)]
-  p[is.na(p)] <- 0
-  p <- as.numeric(p)
-  ## remove the read
-  mat@x <- mat@x - p
+  toi <- table(findInterval(srr,csx,rightmost.closed = FALSE, left.open=T) + 1)
+  ## toi to named numeric vector
+  x <- as.numeric(toi)
+  names(x) <- names(toi)
+  toi <- x
+  rm(x)
+  ## expand to match x vector
+  toi2 <- toi[match(as.character(1:length(mat@x)), names(toi))]
+  toi2[is.na(toi2)] <- 0
+  ## remove sampled reads
+  mat@x <- mat@x - toi2
   ## drop any newly appearing 0s
   mat <- Matrix::drop0(mat)
+  mat
 }
-
