@@ -120,13 +120,6 @@ namedNames <- function(g) {
   n
 }
 
-#' Set the element of an objects as the names
-#' Useful in combination with lapply
-#' @param x the object to process
-#' @return the same object with the elements named after conversion to character
-#' @export setNames
-setNames <- function(x) {names(x) <- as.character(x); x}
-
 
 #' Get the top level structure of an object
 #' @param x the object to examine
