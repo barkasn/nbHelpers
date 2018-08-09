@@ -319,4 +319,13 @@ namedLevels <- function(f) {
   r
 }
 
-
+#' Like list.files but return the full path and the vector entries
+#' are named only after the basename
+#' @param path location to list
+#' @export getNamedDirectoryListing
+getNamedDirectoryListing <- function(path) {
+  x <- list.files(path)
+  z <- paste0(path,'/',x)
+  names(z) <- x
+  z
+}
