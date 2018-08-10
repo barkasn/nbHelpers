@@ -329,3 +329,25 @@ getNamedDirectoryListing <- function(path) {
   names(z) <- x
   z
 }
+
+#' Parallel apply using the packages parallel, BiocParallel or regular lapply
+#' @description From the pagoda package with some minor improvements originally called papply
+#' @param ... parameters to the apply functions, do not include BPPARAM or mc.cores
+#' @param n.cores numbere of cores to use, will automatically detect the number of physical cores if possible
+#' @param mc.preschedule parameter for mclapply
+#' @export plapply
+plapply <- function(...,n.cores=detectCores(logical=FALSE), mc.preschedule=FALSE) {
+  if(n.cores>1) {
+    if(requireNamespace("parallel", quietly = TRUE)) {
+      return(parallel::mclapply(...,mc.cores=n.cores,mc.preschedule=mc.preschedule))
+    }
+
+    if(requireNamespace("BiocParallel", quietly = TRUE)) {
+      # It should never happen because parallel is specified in Imports
+      return(BiocParallel::bplapply(... , BPPARAM = BiocParallel::MulticoreParam(workers = n.cores)))
+    }
+  }
+
+  # fall back on lapply
+  lapply(...)
+}
