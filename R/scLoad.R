@@ -40,8 +40,8 @@ read10xMatrix <- function(path) {
 #' @param prefix.cells prefix all cells with the name of the respective path in paths
 #' @param prefix.sep separator for prefix of cells
 #' @return a sparce matrix of the Matrix package that contains all the data prefixes by the corresponding sample name
-#' @export read10xmatrices
-read10xmatrices <- function(paths, min.common.genes = 1000, common.genes = T, merge =T, prefix.cells=T,
+#' @export read10Xmatrices
+read10Xmatrices <- function(paths, min.common.genes = 1000, common.genes = FALSE, merge =FALSE, prefix.cells=FALSE,
                             prefix.sep = '_') {
   if (merge && !common.genes) stop("Can't merge matrices if common.genes is not set. Aborting.");
   if (merge && !prefix.cells) stop("Can't merge matrices if prefix.cells is not set. Aborting.");
