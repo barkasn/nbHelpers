@@ -30,12 +30,6 @@ read10xMatrix <- function(path) {
   invisible(x);
 }
 
-#' @title wrapper with old name for read10xmatrices
-#' @export readMultiple10Xmatrices
-readMultiple10Xmatrices <- function(...) {
-  readmultiple10xmatrices(...);
-}
-
 #' @title read multiple 10x matrices into a single sparse array
 #' @description given a named list of paths of 10X matrices return a single large matrix
 #' with all the data and cell prefixed with the corresponding sample name
