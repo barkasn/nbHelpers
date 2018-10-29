@@ -351,3 +351,13 @@ plapply <- function(...,n.cores=detectCores(logical=FALSE), mc.preschedule=FALSE
   # fall back on lapply
   lapply(...)
 }
+
+#' Get the percent of entries that are filled in a sparse matrix
+#' @param mat matrix of class dgCMatrix or dgRMatrix
+#' @return percent of entries that are non-zero
+#' @export sparseMatrixDensity
+sparseMatrixDensity <- function(mat) {
+  if(!class(mat) %in% c("dgCMatrix","dgRMatrix")) stop('mat needs to be of class dgCMatrix or dgRMatrix')
+  dim0 <- dim(mat)
+  sum(mat@x > 0) / (dim0[1] * dim0[2])
+}
