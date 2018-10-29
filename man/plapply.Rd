@@ -4,7 +4,8 @@
 \alias{plapply}
 \title{Parallel apply using the packages parallel, BiocParallel or regular lapply}
 \usage{
-plapply(..., n.cores = detectCores(logical = FALSE), mc.preschedule = FALSE)
+plapply(..., n.cores = detectCores(logical = FALSE),
+  mc.preschedule = FALSE)
 }
 \arguments{
 \item{...}{parameters to the apply functions, do not include BPPARAM or mc.cores}
