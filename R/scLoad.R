@@ -7,28 +7,39 @@ NULL
 #' from the specified directory and returns it. It aborts if one of the required
 #' files in the specified directory do not exist.
 #' @param path location of 10x output
+#' @param version version of 10x output to read, must be one of 'V2' or 'V3'
 #' @return read matrix
 #' @import Matrix
 #' @import methods
 #' @export read10xMatrix
-read10xMatrix <- function(path) {
-  matrixFile <- paste(path, 'matrix.mtx', sep='/');
-  genesFile <- paste(path, 'genes.tsv', sep='/');
-  barcodesFile <- paste(path, 'barcodes.tsv', sep='/');
-
-  if (!file.exists(matrixFile)) { stop('Matrix file does not exist');  }
-  if (!file.exists(genesFile)) { stop('Genes file does not exist'); }
-  if (!file.exists(barcodesFile)) { stop('Barcodes file does not exist'); }
-
-  x <- as(Matrix::readMM(matrixFile), 'dgCMatrix')
-
-  genes <- read.table(genesFile)
-  rownames(x) <- genes[,2];
-
-  barcodes <- read.table(barcodesFile);
-  colnames(x) <- barcodes[,1]
-  invisible(x);
+read10xMatrix <- function(path, version='V2') {
+    if(version == 'V2') {
+        unpackFunction <- I
+        suffix <- ''
+    } else if (version == 'V3') {
+        unpackFunction <- gzfile
+        suffix <- '.gz'
+    } else {
+        stop('Unknown file version!')
+    }
+    matrixFile <- paste0(path, '/matrix.mtx', suffix);
+    if (version == 'V2') {
+        genesFile <- paste0(path, '/genes.tsv', suffix);
+    } else if (version == 'V3') {
+        genesFile <- paste0(path, '/features.tsv', suffix);
+    }
+    barcodesFile <- paste0(path, '/barcodes.tsv', suffix);
+    if (!file.exists(matrixFile)) { stop('Matrix file does not exist');  }
+    if (!file.exists(genesFile)) { stop('Genes file does not exist'); }
+    if (!file.exists(barcodesFile)) { stop('Barcodes file does not exist'); }
+    x <- as(Matrix::readMM(unpackFunction(matrixFile)), 'dgCMatrix')
+    genes <- read.table(unpackFunction(genesFile));
+    rownames(x) <- genes[,2];
+    barcodes <- read.table(unpackFunction(barcodesFile));
+    colnames(x) <- barcodes[,1]
+    invisible(x);
 }
+
 
 #' @title read multiple 10x matrices into a single sparse array
 #' @description given a named list of paths of 10X matrices return a single large matrix
