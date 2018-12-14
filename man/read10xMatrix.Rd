@@ -4,10 +4,12 @@
 \alias{read10xMatrix}
 \title{Read 10x matrix}
 \usage{
-read10xMatrix(path)
+read10xMatrix(path, version = "V2")
 }
 \arguments{
 \item{path}{location of 10x output}
+
+\item{version}{version of 10x output to read, must be one of 'V2' or 'V3'}
 }
 \value{
 read matrix
