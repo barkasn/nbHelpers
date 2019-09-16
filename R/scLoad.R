@@ -8,11 +8,12 @@ NULL
 #' files in the specified directory do not exist.
 #' @param path location of 10x output
 #' @param version version of 10x output to read, must be one of 'V2' or 'V3'
+#' @param transcript.id transcript identifier to use, can be SYMBOL or ENSEMBL
 #' @return read matrix
 #' @import Matrix
 #' @import methods
 #' @export read10xMatrix
-read10xMatrix <- function(path, version='V2') {
+read10xMatrix <- function(path, version='V2', transcript.id = 'SYMBOL') {
     if(version == 'V2') {
         unpackFunction <- I
         suffix <- ''
@@ -21,6 +22,13 @@ read10xMatrix <- function(path, version='V2') {
         suffix <- '.gz'
     } else {
         stop('Unknown file version!')
+    }
+    if(transcript.id == 'SYMBOL') {
+        transcript.id.col.idx = 2
+    } else if (transcript.id == 'ENSEMBL') {
+        transcript.id.col.idx = 1
+    } else {
+        stop('Unknown transcript identifier')
     }
     matrixFile <- paste0(path, '/matrix.mtx', suffix);
     if (version == 'V2') {
@@ -34,7 +42,7 @@ read10xMatrix <- function(path, version='V2') {
     if (!file.exists(barcodesFile)) { stop('Barcodes file does not exist'); }
     x <- as(Matrix::readMM(unpackFunction(matrixFile)), 'dgCMatrix')
     genes <- read.table(unpackFunction(genesFile));
-    rownames(x) <- genes[,2];
+    rownames(x) <- genes[,transcript.id.col.idx];
     barcodes <- read.table(unpackFunction(barcodesFile));
     colnames(x) <- barcodes[,1]
     invisible(x);
