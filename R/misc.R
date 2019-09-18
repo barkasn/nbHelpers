@@ -362,7 +362,7 @@ sparseMatrixDensity <- function(mat) {
   sum(mat@x > 0) / (dim0[1] * dim0[2])
 }
 
-#' Transpose a dgRMatrix fast
+#' Transpose a dgRMatrix and simultaneously convert it to dgCMatrix
 #' @param inmat input matrix in dgRMatrix format
 #' @return A dgCMatrix that is the transposed dgRMatrix
 #' @export transpose_dgRMatrix
@@ -378,3 +378,14 @@ transpose_dgRMatrix <- function(inmat) {
                )
     out
 }                                 
+
+#' Given two vectors return the number of elements
+#' only in a, in their intersection and only in b
+#' @param a first vector
+#' @param b second vector
+#' @return a vector with (element count only in a, element count in intersection, element count only in b)
+#' @export vennCounts
+vennCounts <- function(a,b) {
+    i <- length(intersect(a,b))
+    c(length(a) - i, i, length(b))
+}
