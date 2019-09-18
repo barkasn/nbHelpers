@@ -1,0 +1,10 @@
+VER=-9
+CC=gcc$(VER)
+CXX=g++$(VER)
+CXX11=g++$(VER)
+CXX14=g++$(VER)
+CXX17=g++$(VER)
+CFLAGS=-mtune=native -g -O2 -Wall -pedantic -Wconversion
+CXXFLAGS=-mtune=native -g -O2 -Wall -pedantic -Wconversion
+FLIBS=-L/usr/local/Cellar/gcc/9.2.0/lib/gcc/9
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
